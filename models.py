@@ -34,6 +34,7 @@ class Event(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
+    owner = Column(Integer, ForeignKey("user.id"))
 
     attendees = relationship("User", secondary=user_event, back_populates="user")
 
