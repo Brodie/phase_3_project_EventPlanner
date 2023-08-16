@@ -22,8 +22,9 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String)
-
-    events = relationship("Event", secondary=user_event, back_populates="event")
+    my_event = Column(Integer, ForeignKey("event.id"))
+    owned_events = relationship("Event", back_populates="owner")
+    events = relationship("Event", secondary=user_event, back_populates="attendees")
 
     def __repr__(self):
         return f"<User: {self.name}>"
@@ -33,10 +34,10 @@ class Event(Base):
     __tablename__ = "event"
 
     id = Column(Integer, primary_key=True)
-    name = Column(String)
-    owner = Column(Integer, ForeignKey("user.id"))
-
-    attendees = relationship("User", secondary=user_event, back_populates="user")
+    title = Column(String)
+    owner_id = Column(Integer, ForeignKey("user.id"))
+    owner = relationship("User", back_populates="owned_events")
+    attendees = relationship("User", secondary=user_event, back_populates="events")
 
     def __repr__(self):
         return f"<Event: {self.name}>"
