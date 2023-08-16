@@ -25,6 +25,9 @@ class User(Base):
 
     events = relationship("Event", secondary=user_event, back_populates="event")
 
+    def __repr__(self):
+        return f"<User: {self.name}>"
+
 
 class Event(Base):
     __tablename__ = "event"
@@ -33,3 +36,6 @@ class Event(Base):
     name = Column(String)
 
     attendees = relationship("User", secondary=user_event, back_populates="user")
+
+    def __repr__(self):
+        return f"<Event: {self.name}>"
