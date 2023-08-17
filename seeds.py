@@ -14,5 +14,5 @@ session = Session()
 
 for i in range(5):
     user = User(name=fake.unique.name())
-    session.add(User)
+    session.add(user)
     session.commit()
