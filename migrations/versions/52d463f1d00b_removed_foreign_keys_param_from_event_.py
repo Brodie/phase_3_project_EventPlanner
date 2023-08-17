@@ -1,8 +1,8 @@
-"""added columns to models
+"""removed foreign_keys param from event.owner
 
-Revision ID: 55af29dd81f1
+Revision ID: 52d463f1d00b
 Revises: 928e5a4c6cb0
-Create Date: 2023-08-16 09:51:12.987872
+Create Date: 2023-08-16 20:09:13.186358
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '55af29dd81f1'
+revision: str = '52d463f1d00b'
 down_revision: Union[str, None] = '928e5a4c6cb0'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,14 +25,16 @@ def upgrade() -> None:
     sa.Column('title', sa.String(), nullable=True),
     sa.Column('owner_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['owner_id'], ['user.id'], name=op.f('fk_event_owner_id_user')),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('owner_id')
     )
     op.create_table('user',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(), nullable=True),
-    sa.Column('my_event', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['my_event'], ['event.id'], name=op.f('fk_user_my_event_event')),
-    sa.PrimaryKeyConstraint('id')
+    sa.Column('my_event_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['my_event_id'], ['event.id'], name=op.f('fk_user_my_event_id_event')),
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('my_event_id')
     )
     op.create_table('user_event',
     sa.Column('user_id', sa.Integer(), nullable=False),
