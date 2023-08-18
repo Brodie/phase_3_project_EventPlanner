@@ -44,6 +44,15 @@ class User(Base):
     def __repr__(self):
         return f"<User: {self.name}>"
 
+    def __init__(self, name):
+        self.name = name
+        self.invites = []
+
+    def create_event(self, event):
+        eve = Event(title=event)
+        session.add(eve)
+        session.commit()
+
     @classmethod
     def get_all(cls):
         all = session.query(cls)
@@ -65,6 +74,10 @@ class Event(Base):
     # instance methods
     def __repr__(self):
         return f"<Event: {self.title}>"
+
+    def check_attendees(self):
+        for i in self.attendees:
+            print(i.name)
 
     @classmethod
     def get_all(cls):
