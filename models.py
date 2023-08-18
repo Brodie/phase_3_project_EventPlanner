@@ -62,7 +62,12 @@ class Event(Base):
     owner = relationship("User", back_populates="owned_events", foreign_keys=[owner_id])
     attendees = relationship("User", secondary=user_event, back_populates="events")
 
-    # class variables
     # instance methods
     def __repr__(self):
         return f"<Event: {self.title}>"
+
+    @classmethod
+    def get_all(cls):
+        all = session.query(cls)
+        for event in all:
+            print(event)
