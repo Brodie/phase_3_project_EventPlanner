@@ -47,11 +47,27 @@ class User(Base):
     def __init__(self, name):
         self.name = name
         self.invites = []
+        self.invited_events = []
 
     def create_event(self, event):
         eve = Event(title=event)
         session.add(eve)
         session.commit()
+
+    def invite_user(self, user):
+        invite = f"You've been invited to {self.name}'s {self.owned_events}!"
+        user.invites.append(invite)
+        user.invited_events.append(self.owned_events)
+
+    def answer_invite(self, input):
+        if not input:
+            self.invites.pop[0]
+            self.invited_events.pop[0]
+            return "Declined Invite"
+        self.invited_events[0].attendees.append(self)
+        self.invites.pop[0]
+        self.invited_events.pop[0]
+        return "Successfully added to Event! Invitation deleted"
 
     @classmethod
     def get_all(cls):
