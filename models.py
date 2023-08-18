@@ -1,6 +1,19 @@
-from sqlalchemy.orm import declarative_base, relationship, backref
-from sqlalchemy import Column, Integer, String, Table, ForeignKey, MetaData
+from sqlalchemy.orm import declarative_base, relationship, sessionmaker
+from sqlalchemy import (
+    Column,
+    Integer,
+    String,
+    Table,
+    ForeignKey,
+    MetaData,
+    create_engine,
+)
 
+engine = create_engine("sqlite:///EventPlanner.db")
+Session = sessionmaker(bind=engine)
+session = Session()
+
+# foreign keys naming convention, so that all tables are standardized
 con = {
     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
 }
@@ -27,11 +40,15 @@ class User(Base):
     owned_events = relationship("Event", back_populates="owner")
     events = relationship("Event", secondary=user_event, back_populates="attendees")
 
-    # class variables
-
     # instance methods
     def __repr__(self):
         return f"<User: {self.name}>"
+
+    @classmethod
+    def get_all(cls):
+        all = session.query(cls)
+        for user in all:
+            print(user)
 
 
 class Event(Base):
