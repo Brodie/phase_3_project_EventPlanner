@@ -39,6 +39,7 @@ class User(Base):
 
     owned_events = relationship("Event", back_populates="owner")
     events = relationship("Event", secondary=user_event, back_populates="attendees")
+    invites = relationship("Invite", back_populates="user")
 
     # instance methods
     def __repr__(self):
@@ -54,20 +55,22 @@ class User(Base):
         session.add(eve)
         session.commit()
 
-    def invite_user(self, user):
-        invite = f"You've been invited to {self.name}'s {self.owned_events}!"
-        user.invites.append(invite)
-        user.invited_events.append(self.owned_events)
+    # need to fix these methods:
 
-    def answer_invite(self, input):
-        if not input:
-            self.invites.pop[0]
-            self.invited_events.pop[0]
-            return "Declined Invite"
-        self.invited_events[0].attendees.append(self)
-        self.invites.pop[0]
-        self.invited_events.pop[0]
-        return "Successfully added to Event! Invitation deleted"
+    # def invite_user(self, user):
+    #     invite = f"You've been invited to {self.name}'s {self.owned_events}!"
+    #     user.invites.append(invite)
+    #     user.invited_events.append(self.owned_events)
+
+    # def answer_invite(self, input):
+    #     if not input:
+    #         self.invites.pop[0]
+    #         self.invited_events.pop[0]
+    #         return "Declined Invite"
+    #     self.invited_events[0].attendees.append(self)
+    #     self.invites.pop[0]
+    #     self.invited_events.pop[0]
+    #     return "Successfully added to Event! Invitation deleted"
 
     @classmethod
     def get_all(cls):
@@ -86,6 +89,7 @@ class Event(Base):
 
     owner = relationship("User", back_populates="owned_events", foreign_keys=[owner_id])
     attendees = relationship("User", secondary=user_event, back_populates="events")
+    invites = relationship("Invite", back_populates="event")
 
     # instance methods
     def __repr__(self):
@@ -100,3 +104,14 @@ class Event(Base):
         all = session.query(cls)
         for event in all:
             print(event)
+
+
+class Invite(Base):
+    __tablename__ = "invite"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    invitation = Column(String)
+    event_id = Column(Integer, ForeignKey("event.id"))
+    user = relationship("User", back_populates="invites")
+    event = relationship("Event", back_populates="invites")
