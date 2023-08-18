@@ -18,6 +18,7 @@ user_event = Table(
 
 
 class User(Base):
+    # table setup / relations
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True)
@@ -26,11 +27,15 @@ class User(Base):
     owned_events = relationship("Event", back_populates="owner")
     events = relationship("Event", secondary=user_event, back_populates="attendees")
 
+    # class variables
+
+    # instance methods
     def __repr__(self):
         return f"<User: {self.name}>"
 
 
 class Event(Base):
+    # table setup / relations
     __tablename__ = "event"
 
     id = Column(Integer, primary_key=True)
@@ -40,5 +45,7 @@ class Event(Base):
     owner = relationship("User", back_populates="owned_events", foreign_keys=[owner_id])
     attendees = relationship("User", secondary=user_event, back_populates="events")
 
+    # class variables
+    # instance methods
     def __repr__(self):
-        return f"<Event: {self.name}>"
+        return f"<Event: {self.title}>"
