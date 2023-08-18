@@ -39,7 +39,7 @@ class User(Base):
 
     owned_events = relationship("Event", back_populates="owner")
     events = relationship("Event", secondary=user_event, back_populates="attendees")
-    invites = relationship("Invite", back_populates="user")
+    invites = relationship("Invite", back_populates="invitee")
 
     # instance methods
     def __repr__(self):
@@ -110,8 +110,11 @@ class Invite(Base):
     __tablename__ = "invite"
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("user.id"))
+    sender_id = Column(Integer, ForeignKey("user.id"))
+    invitee_id = Column(Integer, ForeignKey("user.id"))
     invitation = Column(String)
     event_id = Column(Integer, ForeignKey("event.id"))
-    user = relationship("User", back_populates="invites")
+
+    sender = relationship("User", back_populates="invites", foreign_keys=[sender_id])
+    invitee = relationship("User", foreign_keys=[invitee_id])
     event = relationship("Event", back_populates="invites")
