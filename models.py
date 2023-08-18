@@ -30,6 +30,23 @@ user_event = Table(
 )
 
 
+class Invite(Base):
+    __tablename__ = "invite"
+
+    id = Column(Integer, primary_key=True)
+    sender_id = Column(Integer, ForeignKey("user.id"))
+    invitee_id = Column(Integer, ForeignKey("user.id"))
+    invitation = Column(String)
+    event_id = Column(Integer, ForeignKey("event.id"))
+
+    sender = relationship("User", back_populates="invites", foreign_keys=[sender_id])
+    invitee = relationship("User", foreign_keys=[invitee_id])
+    event = relationship("Event", back_populates="invites")
+
+    def __repr__(self):
+        return f"<Invite from: {self.sender.name}"
+
+
 class User(Base):
     # table setup / relations
     __tablename__ = "user"
@@ -39,38 +56,32 @@ class User(Base):
 
     owned_events = relationship("Event", back_populates="owner")
     events = relationship("Event", secondary=user_event, back_populates="attendees")
-    invites = relationship("Invite", back_populates="invitee")
+    invites = relationship(
+        "Invite", back_populates="invitee", foreign_keys=[Invite.invitee_id]
+    )
 
     # instance methods
     def __repr__(self):
         return f"<User: {self.name}>"
-
-    def __init__(self, name):
-        self.name = name
-        self.invites = []
-        self.invited_events = []
 
     def create_event(self, event):
         eve = Event(title=event)
         session.add(eve)
         session.commit()
 
-    # need to fix these methods:
+    def invite_user(self, user):
+        message = f"You've been invited to {self.name}'s {self.owned_events}!"
+        invite = Invite(
+            sender_id=self.id,
+            invitee_id=user.id,
+            invitation=message,
+            event_id=self.owned_events[0].id,
+        )
+        session.add(invite)
+        session.commit()
 
-    # def invite_user(self, user):
-    #     invite = f"You've been invited to {self.name}'s {self.owned_events}!"
-    #     user.invites.append(invite)
-    #     user.invited_events.append(self.owned_events)
-
-    # def answer_invite(self, input):
-    #     if not input:
-    #         self.invites.pop[0]
-    #         self.invited_events.pop[0]
-    #         return "Declined Invite"
-    #     self.invited_events[0].attendees.append(self)
-    #     self.invites.pop[0]
-    #     self.invited_events.pop[0]
-    #     return "Successfully added to Event! Invitation deleted"
+    def answer_invite(self, input):
+        pass
 
     @classmethod
     def get_all(cls):
@@ -104,17 +115,3 @@ class Event(Base):
         all = session.query(cls)
         for event in all:
             print(event)
-
-
-class Invite(Base):
-    __tablename__ = "invite"
-
-    id = Column(Integer, primary_key=True)
-    sender_id = Column(Integer, ForeignKey("user.id"))
-    invitee_id = Column(Integer, ForeignKey("user.id"))
-    invitation = Column(String)
-    event_id = Column(Integer, ForeignKey("event.id"))
-
-    sender = relationship("User", back_populates="invites", foreign_keys=[sender_id])
-    invitee = relationship("User", foreign_keys=[invitee_id])
-    event = relationship("Event", back_populates="invites")

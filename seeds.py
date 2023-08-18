@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-from models import User, Event, user_event
+from models import User, Event, Invite, user_event
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from faker import Faker
@@ -20,6 +20,7 @@ EVENTS = ["wedding", "birthday", "expo", "concert", "corporate", "other"]
 def delete_entries():
     session.query(User).delete()
     session.query(Event).delete()
+    session.query(Invite).delete()
     session.query(user_event).delete()
 
 

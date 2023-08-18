@@ -2,7 +2,7 @@
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from models import User, Event
+from models import User, Event, Invite
 
 if __name__ == "__main__":
     engine = create_engine("sqlite:///EventPlanner.db")
