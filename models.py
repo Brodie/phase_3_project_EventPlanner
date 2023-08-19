@@ -49,6 +49,7 @@ class Invite(Base):
 
 class User(Base):
     # table setup / relations
+    # ------------------------------------------------------------------------------
     __tablename__ = "user"
 
     id = Column(Integer, primary_key=True)
@@ -61,11 +62,14 @@ class User(Base):
     )
 
     # instance methods
+    # ------------------------------------------------------------------------------
     def __repr__(self):
         return f"<User: {self.name}>"
 
     def create_event(self, event):
-        eve = Event(title=event)
+        if self.owned_events[0]:
+            return "User cannot own multiple events."
+        eve = Event(title=event, owner_id=self.id)
         session.add(eve)
         session.commit()
 
@@ -96,7 +100,7 @@ class Event(Base):
 
     id = Column(Integer, primary_key=True)
     title = Column(String)
-    owner_id = Column(Integer, ForeignKey("user.id"), unique=True)
+    owner_id = Column(Integer, ForeignKey("user.id"))
 
     owner = relationship("User", back_populates="owned_events", foreign_keys=[owner_id])
     attendees = relationship("User", secondary=user_event, back_populates="events")
@@ -109,6 +113,11 @@ class Event(Base):
     def check_attendees(self):
         for i in self.attendees:
             print(i.name)
+
+    def remove_attendee(self, user):
+        for i in self.attendees:
+            if i.name == user.name:
+                self.attendees.remove(i)
 
     @classmethod
     def get_all(cls):
