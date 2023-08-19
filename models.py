@@ -74,6 +74,8 @@ class User(Base):
         session.commit()
 
     def invite_user(self, user):
+        if self == user:
+            return "Cannot invite self"
         message = f"You've been invited to {self.name}'s {self.owned_events}!"
         invite = Invite(
             sender_id=self.id,
