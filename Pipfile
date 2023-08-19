@@ -8,6 +8,7 @@ alembic = "*"
 sqlalchemy = "==1.4.41"
 faker = "*"
 ipdb = "*"
+click = "*"
 
 [dev-packages]
 
