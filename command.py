@@ -8,7 +8,4 @@ class CommandLine:
         self.current_user = None
 
     def start(self):
-        self.new_screen()
-
-    def new_screen(self):
-        print("\n" * 50)
+        pass
