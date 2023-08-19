@@ -11,10 +11,26 @@ class CommandLine:
 
     def start(self):
         self.clear()
-        options = ["Login", "Sign-Up"]
+        if not self.current_user:
+            options = ["Login", "Sign-Up"]
+        if self.current_user:
+            options = [
+                "Manage My Events",
+                "Create New Event",
+                "Events to Attend",
+                "Sign Out and Exit",
+            ]
         menu = TerminalMenu(options)
         entry_index = menu.show()
-        print(cyan(f"selected {options[entry_index]}"))
+        self.handle_login(entry_index)
 
     def clear(self):
         print("\n" * 50)
+
+    def handle_login(self, selection):
+        if selection == 1:
+            self.create_user()
+
+    def create_user(self):
+        username = input("Please enter First and Last name: ")
+        print(username)
