@@ -9,7 +9,6 @@ class CommandLine:
 
     def start(self):
         self.new_screen()
-        print("Hello!")
 
     def new_screen(self):
         print("\n" * 50)
