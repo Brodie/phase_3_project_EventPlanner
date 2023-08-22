@@ -53,5 +53,12 @@ class CommandLine:
         self.start()
 
     def handle_select(self, selection):
-        switch_dict = {"Sign-Up": self.create_user, "Login": self.handle_login}
+        switch_dict = {
+            "Sign-Up": self.create_user,
+            "Login": self.handle_login,
+            "Manage My Events": None,
+            "Create New Event": None,
+            "Events to Attend": None,
+            "Sign Out and Exit": None,
+        }
         switch_dict[selection]()
