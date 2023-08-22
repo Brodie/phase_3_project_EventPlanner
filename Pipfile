@@ -10,6 +10,7 @@ faker = "*"
 ipdb = "*"
 simple-term-menu = "*"
 cli-color-py = "*"
+pyinputplus = "*"
 
 [dev-packages]
 
