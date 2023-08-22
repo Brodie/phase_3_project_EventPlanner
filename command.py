@@ -38,7 +38,7 @@ class CommandLine:
 
     def create_user(self):
         username = pimp.inputRegex(
-            r"[a-zA-Z]+ [a-zA-Z]+",
+            r"^[a-zA-Z]+ [a-zA-Z]+$",
             prompt="Please enter First and Last name with one space and no symbols please :) ",
         )
         print(f"You Entered: {username} \n Is this Correct?")
