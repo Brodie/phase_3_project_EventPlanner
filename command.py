@@ -17,24 +17,23 @@ class CommandLine:
     def start(self):
         self.clear()
         if not self.current_user:
-            options = ["Login", "Sign-Up"]
+            select = ["Login", "Sign-Up"]
         if self.current_user:
-            options = [
+            select = [
                 "Manage My Events",
                 "Create New Event",
                 "Events to Attend",
                 "Sign Out and Exit",
             ]
-        menu = TerminalMenu(options)
+        menu = TerminalMenu(select)
         entry_index = menu.show()
-        self.handle_login(entry_index)
+        self.handle_select(select[entry_index])
 
     def clear(self):
         print("\n" * 50)
 
     def handle_login(self, selection):
-        if selection == 1:
-            self.create_user()
+        pass
 
     def create_user(self):
         username = pimp.inputRegex(
@@ -50,3 +49,9 @@ class CommandLine:
         user = User(name=f"{username}")
         session.add(user)
         session.commit()
+        self.current_user = user
+        self.start()
+
+    def handle_select(self, selection):
+        switch_dict = {"Sign-Up": self.create_user, "Login": self.handle_login}
+        switch_dict[selection]()
