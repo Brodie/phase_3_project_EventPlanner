@@ -1,0 +1,6 @@
+- Build handling of accept invites
+- build out inviting other users
+- add date to event table then have events display dates where appropriate
+- build out removing users from events
+- build out create new event method with built in inviting of other users
+- potentially refactor display_events method into separate smaller methods that display what i want
