@@ -19,10 +19,10 @@ class CommandLine:
         if not self.current_user:
             select = ["Login", "Sign-Up"]
         if self.current_user:
+            print(f"Logged in as: {self.current_user.name} \n\n")
             select = [
                 "Manage My Events",
                 "Create New Event",
-                "Events to Attend",
                 "Sign Out and Exit",
             ]
         menu = TerminalMenu(select)
@@ -52,13 +52,30 @@ class CommandLine:
         self.current_user = user
         self.start()
 
+    def handle_login(self):
+        name = pimp.inputRegex(
+            r"^[a-zA-Z]+ [a-zA-Z]+$",
+            prompt="Please enter First and Last name to Login: ",
+        )
+        search = session.query(User).filter(User.name.ilike(f"%{name}%")).first()
+        self.current_user = search
+        self.start()
+
+    def create_event(self):
+        pass
+
+    def display_events(self):
+        pass
+
+    def exit(self):
+        pass
+
     def handle_select(self, selection):
-        switch_dict = {
+        dictionary = {
             "Sign-Up": self.create_user,
             "Login": self.handle_login,
-            "Manage My Events": None,
-            "Create New Event": None,
-            "Events to Attend": None,
-            "Sign Out and Exit": None,
+            "Manage My Events": self.display_events,
+            "Create New Event": self.create_event,
+            "Sign Out and Exit": self.exit,
         }
-        switch_dict[selection]()
+        dictionary[selection]()
