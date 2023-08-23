@@ -83,8 +83,31 @@ class CommandLine:
         pass
 
     def display_events(self):
+        # no owned events
         if not self.current_user.owned_events:
-            print(red("You do not own any Events"))
+            print(red("You do not own any Events\n"))
+
+            # no attending events and no invites
+            if not self.current_user.events and not self.current_user.invites:
+                print(
+                    red(
+                        "You are currently not attending any events.\nNo event Invites :("
+                    )
+                    + yellow("\nReturning to Login Menu")
+                )
+                time.sleep(5)
+                self.start()
+            # either attending events or has invites
+            if self.current_user.events or self.current_user.invites:
+                events = [event.title for event in self.current_user.events]
+                if events:
+                    for i in events:
+                        print("Attending: " + cyan(i))
+                if not events:
+                    print(red("No Events to Attend \n"))
+                    for i in self.current_user.invites:
+                        print(yellow(f"{i.invitation}\n"))
+                    self.answer_invites(self.current_user.invites)
 
         if self.current_user.owned_events[0]:
             print(
@@ -95,6 +118,9 @@ class CommandLine:
                     f"Number of Attendees: {len(self.current_user.owned_events[0].attendees)} \n"
                 )
             )
+
+    def answer_invites(self, invites):
+        pass
 
     def exit(self):
         print(red(f"Good Bye {self.current_user.name}!"))
