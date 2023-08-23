@@ -83,7 +83,18 @@ class CommandLine:
         pass
 
     def display_events(self):
-        pass
+        if not self.current_user.owned_events:
+            print(red("You do not own any Events"))
+
+        if self.current_user.owned_events[0]:
+            print(
+                cyan("Owned Event:")
+                + "\n"
+                + f"{self.current_user.owned_events[0].title.upper()}, "
+                + yellow(
+                    f"Number of Attendees: {len(self.current_user.owned_events[0].attendees)} \n"
+                )
+            )
 
     def exit(self):
         print(red(f"Good Bye {self.current_user.name}!"))
