@@ -120,7 +120,21 @@ class CommandLine:
             )
 
     def answer_invites(self, invites):
-        pass
+        for inv in invites:
+            print(inv.invitation)
+            menu = TerminalMenu(["Accept", "Decline"])
+            answer = menu.show()
+            if answer == 0:
+                query = (
+                    session.query(Event)
+                    .filter(Event.owner_id == inv.sender_id)
+                    .first()[0]
+                )
+                query.attendees.append(self)
+                print(cyan("Accepted Invite!"))
+            if answer == 1:
+                self.invites.remove(inv)
+                print(red("Declined Invite"))
 
     def exit(self):
         print(red(f"Good Bye {self.current_user.name}!"))
