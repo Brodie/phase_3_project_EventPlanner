@@ -39,7 +39,7 @@ def seed_db():
         invitee = User(name=fake.unique.name())
         session.add(invitee)
         session.commit()
-        user.invite_user(invitee)
+        user.invite_user(invitee.name)
 
 
 # running methods to seed db

@@ -79,7 +79,12 @@ class CommandLine:
         self.current_user = search
         self.start()
 
+    def withdraw(self):
+        self.display_events()
+        pass
+
     def create_event(self):
+        self.display_events()
         pass
 
     def display_events(self):
@@ -102,12 +107,27 @@ class CommandLine:
                 events = [event.title for event in self.current_user.events]
                 if events:
                     for i in events:
-                        print("Attending: " + cyan(i))
-                if not events:
-                    print(red("No Events to Attend \n"))
+                        print("Attending: " + cyan(i) + "\n")
+                    if not self.current_user.invites:
+                        print(red("No Invites"))
+                        menu = TerminalMenu(
+                            ["Create Event", "Withdraw from Event", "Go Back"]
+                        )
+                        answer = menu.show()
+                        if answer == 0:
+                            self.create_event()
+                        if answer == 1:
+                            self.withdraw()
+                        if answer == 2:
+                            self.start()
                     print(yellow(f"You have invites!\n"))
                     menu = TerminalMenu(
-                        ["Create Event", "Withdraw From Event", "Answer Invites"]
+                        [
+                            "Create Event",
+                            "Withdraw from Event",
+                            "Answer Invites",
+                            "Go Back",
+                        ]
                     )
                     answer = menu.show()
                     if answer == 0:
@@ -116,7 +136,20 @@ class CommandLine:
                         self.withdraw()
                     if answer == 2:
                         self.answer_invites(self.current_user.invites)
+                    if answer == 3:
+                        self.start
 
+                if not events:
+                    print(red("No Events to Attend \n"))
+                    print(yellow(f"You have invites!\n"))
+                    menu = TerminalMenu(["Create Event", "Answer Invites", "Go Back"])
+                    answer = menu.show()
+                    if answer == 0:
+                        self.create_event()
+                    if answer == 1:
+                        self.answer_invites(self.current_user.invites)
+                    if answer == 2:
+                        self.start()
         if self.current_user.owned_events[0]:
             print(
                 cyan("Owned Event:")
@@ -179,11 +212,15 @@ class CommandLine:
                     session.query(Event).filter(Event.owner_id == inv.sender_id).first()
                 )
                 query.attendees.append(self.current_user)
+                self.current_user.invites.remove(inv)
                 print(cyan("Accepted Invite!"))
             if answer == 1:
                 self.current_user.invites.remove(inv)
                 print(red("Declined Invite"))
         session.commit()
+        time.sleep(2)
+        self.clear()
+        self.display_events()
 
     def exit(self):
         print(red(f"Good Bye {self.current_user.name}!"))
