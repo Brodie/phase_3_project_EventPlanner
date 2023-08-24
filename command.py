@@ -107,7 +107,10 @@ class CommandLine:
             self.start()
 
     def invite_guests(self):
+        print(yellow("\n\n\nEnter nothing to exit\n"))
         name = input("Enter First and Last Name of guest to invite: ")
+        if not name:
+            self.start()
         query = session.query(User).filter(User.name.ilike(f"%{name}%")).first()
 
         if self == name:
@@ -118,14 +121,18 @@ class CommandLine:
             self.invite_guests()
         message = f"You've been invited to {self.current_user.name}'s {self.current_user.owned_events[0].title}!"
         invite = Invite(
-            sender_id=self.id,
+            sender_id=self.current_user.id,
             invitee_id=query.id,
             invitation=message,
-            event_id=self.owned_events[0].id,
+            event_id=self.current_user.owned_events[0].id,
         )
         session.add(invite)
         session.commit()
-        print(cyan(f"Invite sent to {query.name} what would you like to do?"))
+        print(
+            cyan(
+                f"Invite sent to {query.name} when they accept it\nthey will appear in your attendees\nWhat would you like to do?\n"
+            )
+        )
         menu = TerminalMenu(["Invite Another Guest", "Exit"])
         answer = menu.show()
         if answer == 0:
@@ -223,16 +230,7 @@ class CommandLine:
                 edit = TerminalMenu(["Invite Attendees", "Remove Attendee"])
                 res = edit.show()
                 if res == 0:
-                    attendee = input("Enter First and Last of Attendee to Invite: ")
-                    self.current_user.invite_user(attendee)
-                    print(
-                        cyan(
-                            "User Invited! When they accept they will be added!\nReturning to Events Page"
-                        )
-                    )
-                    time.sleep(3.5)
-                    self.clear()
-                    self.display_events()
+                    self.invite_guests()
                 if res == 1:
                     attendee = input("Enter First and Last of attendee to remove: ")
                     query = (
@@ -268,6 +266,13 @@ class CommandLine:
         time.sleep(2)
         self.clear()
         self.display_events()
+
+    def remove_event(self):
+        session.query(Event).filter(Event.owner_id == self.current_user.id).delete()
+        session.commit()
+        print(red("Event Canceled"))
+        time.sleep(2)
+        self.start()
 
     def exit(self):
         print(red(f"Good Bye {self.current_user.name}!"))
