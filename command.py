@@ -84,8 +84,55 @@ class CommandLine:
         pass
 
     def create_event(self):
-        self.display_events()
-        pass
+        self.clear()
+        check = (
+            session.query(Event).filter(Event.owner_id == self.current_user.id).first()
+        )
+        if check:
+            print(red("Cannot own multiple Events"))
+            time.sleep(1.5)
+            self.start()
+        print(yellow("Creating Event...\n"))
+        event_name = input("Please Enter Name of Event: ")
+        self.current_user.create_event(event_name)
+
+        print(yellow("\nWould you like to Invite guests?"))
+        menu = TerminalMenu(["Yes", "No"])
+        answer = menu.show()
+        if answer == 0:
+            self.invite_guests()
+        if answer == 1:
+            print(cyan("Event created!\nReturning to Home"))
+            time.sleep(2)
+            self.start()
+
+    def invite_guests(self):
+        name = input("Enter First and Last Name of guest to invite: ")
+        query = session.query(User).filter(User.name.ilike(f"%{name}%")).first()
+
+        if self == name:
+            print(red("Cannot invite self"))
+            self.invite_guests()
+        if not query:
+            print(red("User does not exist. Please try again\n\n\n"))
+            self.invite_guests()
+        message = f"You've been invited to {self.current_user.name}'s {self.current_user.owned_events[0].title}!"
+        invite = Invite(
+            sender_id=self.id,
+            invitee_id=query.id,
+            invitation=message,
+            event_id=self.owned_events[0].id,
+        )
+        session.add(invite)
+        session.commit()
+        print(cyan(f"Invite sent to {query.name} what would you like to do?"))
+        menu = TerminalMenu(["Invite Another Guest", "Exit"])
+        answer = menu.show()
+        if answer == 0:
+            self.clear()
+            self.invite_guests()
+        if answer == 1:
+            self.start()
 
     def display_events(self):
         # no owned events
