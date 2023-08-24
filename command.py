@@ -137,7 +137,6 @@ class CommandLine:
                 query = (
                     session.query(Event).filter(Event.owner_id == inv.sender_id).first()
                 )
-                print(query.attendees)
                 query.attendees.append(self.current_user)
                 print(cyan("Accepted Invite!"))
             if answer == 1:
