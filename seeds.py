@@ -36,6 +36,10 @@ def seed_db():
             event.attendees.append(User(name=fake.unique.name()))
         session.add(event)
         session.commit()
+        invitee = User(name=fake.unique.name())
+        session.add(invitee)
+        session.commit()
+        user.invite_user(invitee)
 
 
 # running methods to seed db

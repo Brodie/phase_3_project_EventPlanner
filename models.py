@@ -76,7 +76,7 @@ class User(Base):
     def invite_user(self, user):
         if self == user:
             return "Cannot invite self"
-        message = f"You've been invited to {self.name}'s {self.owned_events}!"
+        message = f"You've been invited to {self.name}'s {self.owned_events[0].title}!"
         invite = Invite(
             sender_id=self.id,
             invitee_id=user.id,
