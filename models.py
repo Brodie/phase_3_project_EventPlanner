@@ -74,12 +74,14 @@ class User(Base):
         session.commit()
 
     def invite_user(self, user):
+        query = session.query(User).filter(User.name.ilike(f"%{user}%")).first()
+
         if self == user:
             return "Cannot invite self"
         message = f"You've been invited to {self.name}'s {self.owned_events[0].title}!"
         invite = Invite(
             sender_id=self.id,
-            invitee_id=user.id,
+            invitee_id=query.id,
             invitation=message,
             event_id=self.owned_events[0].id,
         )
@@ -120,6 +122,7 @@ class Event(Base):
         for i in self.attendees:
             if i.name == user.name:
                 self.attendees.remove(i)
+        session.commit()
 
     @classmethod
     def get_all(cls):
