@@ -126,7 +126,47 @@ class CommandLine:
                     f"Number of Attendees: {len(self.current_user.owned_events[0].attendees)} \n"
                 )
             )
-            menu = TerminalMenu(["Cancel Event", "Add/Remove Attendees"])
+            menu = TerminalMenu(["Cancel Event", "Invite/Remove Attendees", "Go Back"])
+            answer = menu.show()
+            if answer == 0:
+                print(red("Are you sure? This cannot be undone\n"))
+                confirm = TerminalMenu(["Yes", "No"])
+                response = confirm.show()
+                if response == 0:
+                    self.remove_event()
+                if response == 1:
+                    self.display_events()
+            if answer == 1:
+                print(cyan("Current Attendees:\n"))
+                for a in self.current_user.owned_events[0].attendees:
+                    print(yellow(a.name + "\n"))
+                edit = TerminalMenu(["Invite Attendees", "Remove Attendee"])
+                res = edit.show()
+                if res == 0:
+                    attendee = input("Enter First and Last of Attendee to Invite: ")
+                    self.current_user.invite_user(attendee)
+                    print(
+                        cyan(
+                            "User Invited! When they accept they will be added!\nReturning to Events Page"
+                        )
+                    )
+                    time.sleep(3.5)
+                    self.clear()
+                    self.display_events()
+                if res == 1:
+                    attendee = input("Enter First and Last of attendee to remove: ")
+                    query = (
+                        session.query(User)
+                        .filter(User.name.ilike(f"%{attendee}%"))
+                        .first()
+                    )
+                    self.current_user.owned_events[0].remove_attendee(query)
+                    print(red(f"{query} Removed from Event\n Returning to Events Page"))
+                    time.sleep(3.5)
+                    self.clear()
+                    self.display_events()
+            if answer == 2:
+                self.start()
 
     def answer_invites(self, invites):
         for inv in invites:
