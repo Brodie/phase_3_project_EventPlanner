@@ -13,7 +13,7 @@ engine = create_engine("sqlite:///EventPlanner.db")
 Session = sessionmaker(bind=engine)
 session = Session()
 
-EVENTS = ["wedding", "birthday", "expo", "concert", "corporate", "other"]
+EVENTS = ["wedding", "birthday", "expo", "concert", "corporate", "house-warming"]
 
 
 # creating methods to seed db
