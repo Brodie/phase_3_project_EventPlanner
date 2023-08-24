@@ -126,6 +126,7 @@ class CommandLine:
                     f"Number of Attendees: {len(self.current_user.owned_events[0].attendees)} \n"
                 )
             )
+            menu = TerminalMenu(["Cancel Event", "Add/Remove Attendees"])
 
     def answer_invites(self, invites):
         for inv in invites:
