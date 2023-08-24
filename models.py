@@ -67,29 +67,12 @@ class User(Base):
         return f"<User: {self.name}>"
 
     def create_event(self, event):
-        if self.owned_events[0]:
+        check = session.query(Event).filter(Event.owner_id == self.id).first()
+        if check:
             return "User cannot own multiple events."
         eve = Event(title=event, owner_id=self.id)
         session.add(eve)
         session.commit()
-
-    def invite_user(self, user):
-        query = session.query(User).filter(User.name.ilike(f"%{user}%")).first()
-
-        if self == user:
-            return "Cannot invite self"
-        message = f"You've been invited to {self.name}'s {self.owned_events[0].title}!"
-        invite = Invite(
-            sender_id=self.id,
-            invitee_id=query.id,
-            invitation=message,
-            event_id=self.owned_events[0].id,
-        )
-        session.add(invite)
-        session.commit()
-
-    def answer_invite(self, input):
-        pass
 
     @classmethod
     def get_all(cls):
