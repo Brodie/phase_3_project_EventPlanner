@@ -70,6 +70,8 @@ class CommandLine:
             answer = menu.show()
             if answer == 0:
                 user = User(name=name)
+                session.add(user)
+                session.commit()
                 self.current_user = user
                 self.start()
             if answer == 1:
@@ -143,7 +145,7 @@ class CommandLine:
         if not query:
             print(red("User does not exist. Please try again\n\n\n"))
             self.invite_guests()
-        print(self.current_user.owned_events)
+
         message = f"You've been invited to {self.current_user.name}'s {self.current_user.owned_events[0].title}!"
         invite = Invite(
             sender_id=self.current_user.id,
@@ -155,7 +157,7 @@ class CommandLine:
         session.commit()
         print(
             cyan(
-                f"Invite sent to {query.name} when they accept it\nthey will appear in your attendees\n\nWhat would you like to do?\n"
+                f"\nInvite sent to {query.name} when they accept it\nthey will appear in your attendees\n\nWhat would you like to do?\n"
             )
         )
         menu = TerminalMenu(["Invite Another Guest", "Exit"])
@@ -339,7 +341,7 @@ class CommandLine:
                 if answer == 3:
                     self.start()
 
-            if self.current_user.owned_events:
+            if self.current_user.events:
                 for i in self.current_user.events:
                     print("Attending: " + cyan(i.title) + "\n\n")
                 menu = TerminalMenu(
