@@ -11,6 +11,7 @@ ipdb = "*"
 simple-term-menu = "*"
 cli-color-py = "*"
 pyinputplus = "*"
+gradient-figlet = "*"
 
 [dev-packages]
 
