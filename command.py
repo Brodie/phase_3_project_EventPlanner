@@ -5,6 +5,7 @@ from simple_term_menu import TerminalMenu
 from cli_color_py import red, yellow, cyan
 import pyinputplus as pyinp
 import time
+from banner import Banner
 
 engine = create_engine("sqlite:///EventPlanner.db")
 Session = sessionmaker(bind=engine)
@@ -17,6 +18,7 @@ class CommandLine:
 
     def start(self):
         self.clear()
+        Banner.welcome()
         if not self.current_user:
             select = ["Login", "Sign-Up", "Close Application"]
         if self.current_user:
@@ -304,8 +306,10 @@ class CommandLine:
         self.start()
 
     def close_app(self):
-        print(red("Thank you for using my Event Planner!"))
-        time.sleep(1.5)
+        self.clear()
+        Banner.goodbye()
+        print(yellow("Thank you for using my Event Planner!"))
+        time.sleep(2.5)
         self.clear()
         return "exit"
 
