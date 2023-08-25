@@ -39,7 +39,15 @@ def seed_db():
         invitee = User(name=fake.unique.name())
         session.add(invitee)
         session.commit()
-        user.invite_user(invitee.name)
+
+        inv = Invite(
+            sender_id=user.id,
+            invitee_id=invitee.id,
+            invitation=f"You've been invited to {user.name}'s {user.owned_events[0].title}!",
+            event_id=user.owned_events[0].id,
+        )
+        session.add(inv)
+        session.commit()
 
 
 # running methods to seed db
