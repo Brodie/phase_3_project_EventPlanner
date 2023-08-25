@@ -2,7 +2,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from models import User, Event, Invite
 from simple_term_menu import TerminalMenu
-from cli_color_py import red, green, yellow, cyan
+from cli_color_py import red, yellow, cyan
 import pyinputplus as pyinp
 import time
 
