@@ -238,6 +238,156 @@ class CommandLine:
                     f"Number of Attendees: {len(self.current_user.owned_events[0].attendees)} \n"
                 )
             )
+            if self.current_user.invites and self.current_user.events:
+                for i in self.current_user.events:
+                    print("Attending: " + cyan(i.title) + "\n\n")
+                print(yellow("You have invites!\n\n"))
+                menu = TerminalMenu(
+                    [
+                        "Cancel Event",
+                        "Invite/Remove Attendees",
+                        "Withdraw from Event",
+                        "Answer Invites",
+                        "Go Back",
+                    ]
+                )
+                answer = menu.show()
+                if answer == 0:
+                    print(red("Are you sure? This cannot be undone\n"))
+                    confirm = TerminalMenu(["Yes", "No"])
+                    response = confirm.show()
+                    if response == 0:
+                        self.remove_event()
+                    if response == 1:
+                        self.display_events()
+                if answer == 1:
+                    print(cyan("Current Attendees:\n"))
+                    for a in self.current_user.owned_events[0].attendees:
+                        print(yellow(a.name + "\n"))
+                    edit = TerminalMenu(["Invite Attendees", "Remove Attendee"])
+                    res = edit.show()
+                    if res == 0:
+                        self.invite_guests()
+                    if res == 1:
+                        attendee = input("Enter First and Last of attendee to remove: ")
+                        query = (
+                            session.query(User)
+                            .filter(User.name.ilike(f"%{attendee}%"))
+                            .first()
+                        )
+                        self.current_user.owned_events[0].remove_attendee(query)
+                        print(
+                            red(
+                                f"{query} Removed from Event\n Returning to Events Page"
+                            )
+                        )
+                        time.sleep(3.5)
+                        self.clear()
+                        self.display_events()
+                if answer == 2:
+                    self.withdraw()
+                if answer == 3:
+                    self.answer_invites(self.current_user.invites)
+                if answer == 4:
+                    self.start()
+
+            if self.current_user.invites:
+                print(yellow("You have invites!\n\n"))
+                menu = TerminalMenu(
+                    [
+                        "Cancel Event",
+                        "Invite/Remove Attendees",
+                        "Answer Invites",
+                        "Go Back",
+                    ]
+                )
+                answer = menu.show()
+                if answer == 0:
+                    print(red("Are you sure? This cannot be undone\n"))
+                    confirm = TerminalMenu(["Yes", "No"])
+                    response = confirm.show()
+                    if response == 0:
+                        self.remove_event()
+                    if response == 1:
+                        self.display_events()
+                if answer == 1:
+                    print(cyan("Current Attendees:\n"))
+                    for a in self.current_user.owned_events[0].attendees:
+                        print(yellow(a.name + "\n"))
+                    edit = TerminalMenu(["Invite Attendees", "Remove Attendee"])
+                    res = edit.show()
+                    if res == 0:
+                        self.invite_guests()
+                    if res == 1:
+                        attendee = input("Enter First and Last of attendee to remove: ")
+                        query = (
+                            session.query(User)
+                            .filter(User.name.ilike(f"%{attendee}%"))
+                            .first()
+                        )
+                        self.current_user.owned_events[0].remove_attendee(query)
+                        print(
+                            red(
+                                f"{query} Removed from Event\n Returning to Events Page"
+                            )
+                        )
+                        time.sleep(3.5)
+                        self.clear()
+                        self.display_events()
+                if answer == 2:
+                    self.answer_invites(self.current_user.invites)
+                if answer == 3:
+                    self.start()
+
+            if self.current_user.owned_events:
+                for i in self.current_user.events:
+                    print("Attending: " + cyan(i.title) + "\n\n")
+                menu = TerminalMenu(
+                    [
+                        "Cancel Event",
+                        "Invite/Remove Attendees",
+                        "Withdraw from Event",
+                        "Go Back",
+                    ]
+                )
+                answer = menu.show()
+                if answer == 0:
+                    print(red("Are you sure? This cannot be undone\n"))
+                    confirm = TerminalMenu(["Yes", "No"])
+                    response = confirm.show()
+                    if response == 0:
+                        self.remove_event()
+                    if response == 1:
+                        self.display_events()
+                if answer == 1:
+                    print(cyan("Current Attendees:\n"))
+                    for a in self.current_user.owned_events[0].attendees:
+                        print(yellow(a.name + "\n"))
+                    edit = TerminalMenu(["Invite Attendees", "Remove Attendee"])
+                    res = edit.show()
+                    if res == 0:
+                        self.invite_guests()
+                    if res == 1:
+                        attendee = input("Enter First and Last of attendee to remove: ")
+                        query = (
+                            session.query(User)
+                            .filter(User.name.ilike(f"%{attendee}%"))
+                            .first()
+                        )
+                        self.current_user.owned_events[0].remove_attendee(query)
+                        print(
+                            red(
+                                f"{query} Removed from Event\n Returning to Events Page"
+                            )
+                        )
+                        time.sleep(3.5)
+                        self.clear()
+                        self.display_events()
+                if answer == 2:
+                    self.withdraw()
+                if answer == 3:
+                    self.start()
+
             menu = TerminalMenu(["Cancel Event", "Invite/Remove Attendees", "Go Back"])
             answer = menu.show()
             if answer == 0:
