@@ -80,8 +80,23 @@ class CommandLine:
         self.start()
 
     def withdraw(self):
-        self.display_events()
-        pass
+        i = 1
+        for eve in self.current_user.events:
+            print(yellow(f"{i}: {eve.title}\n"))
+            i = i + 1
+        remove = input("Enter Number of Event to remove: ")
+        if int(remove) not in range(1, i):
+            self.clear()
+            print(red(f"Error. {remove} not accepted. Try Again\n"))
+            self.withdraw()
+        index = int(remove) - 1
+        session.query(Event).filter(
+            Event.id == self.current_user.events[index].id
+        ).delete()
+        session.commit()
+        print(cyan("Withdrawn From Event\nReturning to menu"))
+        time.sleep(2)
+        self.start()
 
     def create_event(self):
         self.clear()
