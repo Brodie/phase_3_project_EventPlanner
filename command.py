@@ -231,6 +231,8 @@ class CommandLine:
                         self.answer_invites(self.current_user.invites)
                     if answer == 2:
                         self.start()
+
+        # is the owner of events
         if self.current_user.owned_events[0]:
             print(
                 cyan("Owned Event:")
@@ -240,6 +242,7 @@ class CommandLine:
                     f"Number of Attendees: {len(self.current_user.owned_events[0].attendees)} \n"
                 )
             )
+            # owns events, has invites, and is attending events
             if self.current_user.invites and self.current_user.events:
                 for i in self.current_user.events:
                     print("Attending: " + cyan(i.title) + "\n\n")
@@ -292,7 +295,7 @@ class CommandLine:
                     self.answer_invites(self.current_user.invites)
                 if answer == 4:
                     self.start()
-
+            # owns event and has invites but not attending event
             if self.current_user.invites:
                 print(yellow("You have invites!\n\n"))
                 menu = TerminalMenu(
@@ -341,6 +344,7 @@ class CommandLine:
                 if answer == 3:
                     self.start()
 
+            # owns events, is attending event, has no invites
             if self.current_user.events:
                 for i in self.current_user.events:
                     print("Attending: " + cyan(i.title) + "\n\n")
@@ -389,7 +393,7 @@ class CommandLine:
                     self.withdraw()
                 if answer == 3:
                     self.start()
-
+            # no invites, no attending events
             menu = TerminalMenu(["Cancel Event", "Invite/Remove Attendees", "Go Back"])
             answer = menu.show()
             if answer == 0:
