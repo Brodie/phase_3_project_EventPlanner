@@ -61,18 +61,8 @@ class User(Base):
         "Invite", back_populates="invitee", foreign_keys=[Invite.invitee_id]
     )
 
-    # instance methods
-    # ------------------------------------------------------------------------------
     def __repr__(self):
         return f"<User: {self.name}>"
-
-    def create_event(self, event):
-        check = session.query(Event).filter(Event.owner_id == self.id).first()
-        if check:
-            return "User cannot own multiple events."
-        eve = Event(title=event, owner_id=self.id)
-        session.add(eve)
-        session.commit()
 
     @classmethod
     def get_all(cls):

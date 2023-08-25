@@ -84,11 +84,15 @@ class CommandLine:
         for eve in self.current_user.events:
             print(yellow(f"{i}: {eve.title}\n"))
             i = i + 1
-        remove = input("Enter Number of Event to remove: ")
+        remove = input("Enter Number of Event to withdraw from: ")
         if int(remove) not in range(1, i):
             self.clear()
             print(red(f"Error. {remove} not accepted. Try Again\n"))
             self.withdraw()
+        if not remove:
+            print(red("Invalid Entry. Returning to main menu"))
+            time.sleep(2)
+            self.start()
         index = int(remove) - 1
         session.query(Event).filter(
             Event.id == self.current_user.events[index].id
@@ -109,7 +113,10 @@ class CommandLine:
             self.start()
         print(yellow("Creating Event...\n"))
         event_name = input("Please Enter Name of Event: ")
-        self.current_user.create_event(event_name)
+
+        eve = Event(title=event_name, owner_id=self.current_user.id)
+        session.add(eve)
+        session.commit()
 
         print(yellow("\nWould you like to Invite guests?"))
         menu = TerminalMenu(["Yes", "No"])
@@ -134,6 +141,7 @@ class CommandLine:
         if not query:
             print(red("User does not exist. Please try again\n\n\n"))
             self.invite_guests()
+        print(self.current_user.owned_events)
         message = f"You've been invited to {self.current_user.name}'s {self.current_user.owned_events[0].title}!"
         invite = Invite(
             sender_id=self.current_user.id,
@@ -145,7 +153,7 @@ class CommandLine:
         session.commit()
         print(
             cyan(
-                f"Invite sent to {query.name} when they accept it\nthey will appear in your attendees\nWhat would you like to do?\n"
+                f"Invite sent to {query.name} when they accept it\nthey will appear in your attendees\n\nWhat would you like to do?\n"
             )
         )
         menu = TerminalMenu(["Invite Another Guest", "Exit"])
