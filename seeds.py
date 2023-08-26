@@ -31,7 +31,9 @@ def seed_db():
         session.add(user)
         session.commit()
 
-        event = Event(title=random.choice(EVENTS), owner_id=user.id)
+        event = Event(
+            title=random.choice(EVENTS), owner_id=user.id, event_date=fake.date()
+        )
         for i in range(3):
             event.attendees.append(User(name=fake.unique.name()))
         session.add(event)
