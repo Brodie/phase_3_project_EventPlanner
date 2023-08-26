@@ -6,6 +6,7 @@ from cli_color_py import red, yellow, cyan
 import pyinputplus as pyinp
 import time
 from banner import Banner
+import sys
 
 engine = create_engine("sqlite:///EventPlanner.db")
 Session = sessionmaker(bind=engine)
@@ -491,7 +492,7 @@ class CommandLine:
         print(yellow("Thank you for using my Event Planner!"))
         time.sleep(2.5)
         self.clear()
-        return "exit"
+        sys.exit()
 
     def handle_select(self, selection):
         dictionary = {
