@@ -78,6 +78,7 @@ class Event(Base):
     id = Column(Integer, primary_key=True)
     title = Column(String)
     owner_id = Column(Integer, ForeignKey("user.id"))
+    event_date = Column(String)
 
     owner = relationship("User", back_populates="owned_events", foreign_keys=[owner_id])
     attendees = relationship("User", secondary=user_event, back_populates="events")
