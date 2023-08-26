@@ -86,7 +86,7 @@ class CommandLine:
     def withdraw(self):
         i = 1
         for eve in self.current_user.events:
-            print(yellow(f"{i}: {eve.title}\n"))
+            print(yellow(f"{i}: {eve.title},") + cyan(f"{eve.event_date}\n"))
             i = i + 1
         remove = input("Enter Number of Event to withdraw from: ")
         if int(remove) not in range(1, i):
@@ -117,8 +117,15 @@ class CommandLine:
             self.start()
         print(yellow("Creating Event...\n"))
         event_name = input("Please Enter Name of Event: ")
+        print("\n\n")
+        event_date = pyinp.inputRegex(
+            r"^\d{4}-\d{2}-\d{2}$",
+            prompt="Enter event date in following format: YYYY-MM-DD ",
+        )
 
-        eve = Event(title=event_name, owner_id=self.current_user.id)
+        eve = Event(
+            title=event_name, owner_id=self.current_user.id, event_date=event_date
+        )
         session.add(eve)
         session.commit()
 
@@ -146,7 +153,7 @@ class CommandLine:
             print(red("User does not exist. Please try again\n\n\n"))
             self.invite_guests()
 
-        message = f"You've been invited to {self.current_user.name}'s {self.current_user.owned_events[0].title}!"
+        message = f"You've been invited to {self.current_user.name}'s {self.current_user.owned_events[0].title} on {self.current_user.owned_events[0].event_date}!"
         invite = Invite(
             sender_id=self.current_user.id,
             invitee_id=query.id,
@@ -185,10 +192,14 @@ class CommandLine:
                 self.start()
             # either attending events or has invites
             if self.current_user.events or self.current_user.invites:
-                events = [event.title for event in self.current_user.events]
-                if events:
-                    for i in events:
-                        print("Attending: " + cyan(i) + "\n")
+                if self.current_user.events:
+                    for i in self.current_user.events:
+                        print(
+                            "Attending: "
+                            + yellow(f"{i.title} ")
+                            + "on "
+                            + cyan(f"{i.event_date}\n\n")
+                        )
                     if not self.current_user.invites:
                         print(red("No Invites"))
                         menu = TerminalMenu(
@@ -220,7 +231,7 @@ class CommandLine:
                     if answer == 3:
                         self.start
 
-                if not events:
+                if not self.current_user.events:
                     print(red("No Events to Attend \n"))
                     print(yellow(f"You have invites!\n"))
                     menu = TerminalMenu(["Create Event", "Answer Invites", "Go Back"])
@@ -239,13 +250,21 @@ class CommandLine:
                 + "\n"
                 + f"{self.current_user.owned_events[0].title.upper()}, "
                 + yellow(
-                    f"Number of Attendees: {len(self.current_user.owned_events[0].attendees)} \n"
+                    f"Number of Attendees: {len(self.current_user.owned_events[0].attendees)} "
+                )
+                + cyan(
+                    f"Event Date: {self.current_user.owned_events[0].event_date}\n\n"
                 )
             )
             # owns events, has invites, and is attending events
             if self.current_user.invites and self.current_user.events:
                 for i in self.current_user.events:
-                    print("Attending: " + cyan(i.title) + "\n\n")
+                    print(
+                        "Attending: "
+                        + yellow(f"{i.title} ")
+                        + "on "
+                        + cyan(f"{i.event_date}\n\n")
+                    )
                 print(yellow("You have invites!\n\n"))
                 menu = TerminalMenu(
                     [
@@ -347,7 +366,12 @@ class CommandLine:
             # owns events, is attending event, has no invites
             if self.current_user.events:
                 for i in self.current_user.events:
-                    print("Attending: " + cyan(i.title) + "\n\n")
+                    print(
+                        "Attending:"
+                        + yellow(f"{i.title}")
+                        + "on"
+                        + cyan(f"{i.event_date}\n\n")
+                    )
                 menu = TerminalMenu(
                     [
                         "Cancel Event",
